@@ -9,16 +9,9 @@ export function LoadingOverlay({
 }: LoadingOverlayProps) {
   if (!isLoadingHandTracking && !isStartingCamera) return null
 
-  const message =
-    isLoadingHandTracking && isStartingCamera
-      ? 'Loading hand tracking and starting camera…'
-      : isLoadingHandTracking
-        ? 'Loading hand tracking…'
-        : 'Starting camera…'
-
   return (
     <div
-      className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 bg-[var(--color-bg)]/80 backdrop-blur-sm"
+      className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 bg-[var(--color-bg)]/80 backdrop-blur-sm"
       role="status"
       aria-live="polite"
     >
@@ -26,7 +19,21 @@ export function LoadingOverlay({
         className="h-10 w-10 animate-spin rounded-full border-2 border-[var(--color-border)] border-t-[var(--color-accent)]"
         aria-hidden
       />
-      <span className="text-sm text-[var(--color-muted)]">{message}</span>
+
+      <div className="flex flex-col items-center gap-2 text-sm text-[var(--color-muted)]">
+        {isLoadingHandTracking && (
+          <p className="flex items-center gap-2">
+            <span className="inline-block h-1.5 w-1.5 rounded-full bg-[var(--color-accent)]" />
+            Loading hand tracking…
+          </p>
+        )}
+        {isStartingCamera && (
+          <p className="flex items-center gap-2">
+            <span className="inline-block h-1.5 w-1.5 rounded-full bg-[var(--color-accent)]" />
+            Starting camera…
+          </p>
+        )}
+      </div>
     </div>
   )
 }
