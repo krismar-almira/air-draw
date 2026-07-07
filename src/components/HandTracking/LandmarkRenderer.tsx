@@ -7,6 +7,7 @@ interface LandmarkRendererProps {
   landmarks: NormalizedLandmark[] | null
   layout: VideoCoverLayout
   mirrored?: boolean
+  pinchActive?: boolean
 }
 
 const CONNECTIONS: [number, number][] = [
@@ -22,6 +23,7 @@ export function LandmarkRenderer({
   landmarks,
   layout,
   mirrored = true,
+  pinchActive = false,
 }: LandmarkRendererProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const { containerWidth, containerHeight } = layout
@@ -50,6 +52,10 @@ export function LandmarkRenderer({
 
       const p1 = toPixel(start)
       const p2 = toPixel(end)
+      const isPinchLine = pinchActive && ((a === 4 && b === 8) || (a === 8 && b === 4))
+
+      ctx.strokeStyle = isPinchLine ? 'rgba(34, 197, 94, 0.9)' : 'rgba(99, 102, 241, 0.6)'
+      ctx.lineWidth = isPinchLine ? 3 : 2
 
       ctx.beginPath()
       ctx.moveTo(p1.x, p1.y)
@@ -57,14 +63,15 @@ export function LandmarkRenderer({
       ctx.stroke()
     }
 
-    for (const lm of landmarks) {
+    landmarks.forEach((lm, index) => {
       const p = toPixel(lm)
-      ctx.fillStyle = '#818cf8'
+      const isPinchTip = pinchActive && (index === 4 || index === 8)
+      ctx.fillStyle = isPinchTip ? '#22c55e' : '#818cf8'
       ctx.beginPath()
-      ctx.arc(p.x, p.y, 4, 0, Math.PI * 2)
+      ctx.arc(p.x, p.y, isPinchTip ? 6 : 4, 0, Math.PI * 2)
       ctx.fill()
-    }
-  }, [landmarks, layout, mirrored, containerWidth, containerHeight])
+    })
+  }, [landmarks, layout, mirrored, pinchActive, containerWidth, containerHeight])
 
   return (
     <canvas

@@ -22,6 +22,21 @@ export const PINCH_THRESHOLD = 0.045
 /** Thumb–index must be at least this far apart to count as draw */
 export const DRAW_MIN_PINCH_DISTANCE = 0.07
 
+/** Finger must stay raised this long before tap-down counts as a click */
+export const FINGER_TAP_MIN_UP_MS = 50
+
+/** Minimum gap between virtual mouse clicks */
+export const VIRTUAL_MOUSE_CLICK_COOLDOWN_MS = 150
+
+/** Palm movement multiplier — small hand slides move the cursor farther */
+export const VIRTUAL_MOUSE_MOVE_GAIN = 4
+
+/** Frames sampled while hand rests flat during calibration */
+export const VIRTUAL_MOUSE_CALIBRATION_FRAMES = 30
+
+/** Tap lift above rest (tip Z/Y) to count finger as raised — keep low for table taps */
+export const VIRTUAL_MOUSE_TAP_THRESHOLD = 0.008
+
 export const BRUSH_SIZES = [2, 4, 8, 12, 20] as const
 
 export const COLOR_PALETTE = [
