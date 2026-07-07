@@ -106,6 +106,7 @@ export function useGesture() {
 
       return {
         type: stableTypeRef.current,
+        detectedType: detected.type,
         timestamp: command.timestamp,
         position: command.position,
       }

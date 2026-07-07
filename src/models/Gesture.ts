@@ -28,6 +28,8 @@ export interface Gesture {
 
 export interface Command {
   type: CommandType
+  /** Instant detection before debounce */
+  detectedType: CommandType
   timestamp: number
   position?: { x: number; y: number }
 }

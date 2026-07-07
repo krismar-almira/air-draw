@@ -30,6 +30,7 @@ export function DrawingBoard() {
   )
   const prevStableGestureRef = useRef<string>('none')
   const isDrawingRef = useRef(false)
+  const activeStrokeToolRef = useRef<'brush' | 'eraser' | null>(null)
 
   const { videoRef, error, isActive, start } = useCamera()
   const layout = useVideoLayout(containerRef, videoRef, isActive)
@@ -120,6 +121,7 @@ export function DrawingBoard() {
       if (isDrawingRef.current) {
         endStroke()
         isDrawingRef.current = false
+        activeStrokeToolRef.current = null
       }
       processLandmarks(null)
       return
@@ -129,28 +131,50 @@ export function DrawingBoard() {
     if (!command) return
 
     const stableType = command.type
+    const detectedType = command.detectedType
+
+    if (isDrawingRef.current && activeStrokeToolRef.current) {
+      const expected =
+        activeStrokeToolRef.current === 'eraser' ? 'erase' : 'draw'
+      if (detectedType !== expected) {
+        endStroke()
+        isDrawingRef.current = false
+        activeStrokeToolRef.current = null
+      }
+    }
 
     if (stableType === 'draw' || stableType === 'erase') {
       if (!command.position) return
 
+      const strokeTool = stableType === 'erase' ? 'eraser' : 'brush'
       const point = normalizedToContainer(
         command.position.x,
         command.position.y,
         layout,
       )
 
-      if (stableType === 'erase') setTool('eraser')
-      else if (tool === 'eraser') setTool('brush')
+      if (
+        isDrawingRef.current &&
+        activeStrokeToolRef.current !== strokeTool
+      ) {
+        endStroke()
+        isDrawingRef.current = false
+        activeStrokeToolRef.current = null
+      }
 
       if (!isDrawingRef.current) {
-        startStroke(point)
+        startStroke(point, strokeTool)
         isDrawingRef.current = true
+        activeStrokeToolRef.current = strokeTool
       } else {
         continueStroke(point)
       }
+
+      if (tool !== strokeTool) setTool(strokeTool)
     } else if (isDrawingRef.current) {
       endStroke()
       isDrawingRef.current = false
+      activeStrokeToolRef.current = null
     }
 
     if (stableType !== prevStableGestureRef.current) {

@@ -16,6 +16,12 @@ export const GESTURE_DEBOUNCE_MS = 400
 /** Shorter hold time for continuous draw/erase gestures */
 export const GESTURE_DRAW_DEBOUNCE_MS = 150
 
+/** Thumb–index distance below this = pinch (erase) */
+export const PINCH_THRESHOLD = 0.045
+
+/** Thumb–index must be at least this far apart to count as draw */
+export const DRAW_MIN_PINCH_DISTANCE = 0.07
+
 export const BRUSH_SIZES = [2, 4, 8, 12, 20] as const
 
 export const COLOR_PALETTE = [

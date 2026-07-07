@@ -1,6 +1,10 @@
 import type { NormalizedLandmark } from '@mediapipe/tasks-vision'
 import type { FingerState, Gesture, GestureType } from '@/models/Gesture'
 import { createDefaultFingerState } from '@/models/Gesture'
+import {
+  DRAW_MIN_PINCH_DISTANCE,
+  PINCH_THRESHOLD,
+} from '@/config/constants'
 
 const FINGER_TIP = [4, 8, 12, 16, 20] as const
 const FINGER_PIP = [3, 6, 10, 14, 18] as const
@@ -20,10 +24,18 @@ function isFingerExtended(
   return tipDist > pipDist * 1.1
 }
 
+function getPinchDistance(landmarks: NormalizedLandmark[]): number {
+  const indexTip = landmarks[8]
+  const thumbTip = landmarks[4]
+  if (!indexTip || !thumbTip) return 1
+  return Math.hypot(indexTip.x - thumbTip.x, indexTip.y - thumbTip.y)
+}
+
 export function detectFingerStates(
   landmarks: NormalizedLandmark[],
 ): FingerState {
   const state = createDefaultFingerState()
+  const pinchDistance = getPinchDistance(landmarks)
 
   state.thumbExtended = isFingerExtended(landmarks, FINGER_TIP[0], FINGER_PIP[0])
   state.indexExtended = isFingerExtended(landmarks, FINGER_TIP[1], FINGER_PIP[1])
@@ -40,25 +52,26 @@ export function detectFingerStates(
 
   state.openPalm = extendedCount >= 4
   state.fist = extendedCount === 0
-
-  const indexTip = landmarks[8]
-  const thumbTip = landmarks[4]
-  if (indexTip && thumbTip) {
-    const pinchDist = Math.hypot(indexTip.x - thumbTip.x, indexTip.y - thumbTip.y)
-    state.pinch = pinchDist < 0.05
-  }
+  state.pinch = pinchDistance < PINCH_THRESHOLD
 
   return state
 }
 
-export function fingerStateToGesture(fingers: FingerState): Gesture {
+export function fingerStateToGesture(
+  fingers: FingerState,
+  pinchDistance: number,
+): Gesture {
   let type: GestureType = 'none'
   let confidence = 0.5
 
-  if (fingers.pinch) {
+  if (pinchDistance < PINCH_THRESHOLD) {
     type = 'erase'
     confidence = 0.85
-  } else if (fingers.indexExtended && !fingers.middleExtended) {
+  } else if (
+    fingers.indexExtended &&
+    !fingers.middleExtended &&
+    pinchDistance >= DRAW_MIN_PINCH_DISTANCE
+  ) {
     type = 'draw'
     confidence = 0.9
   } else if (fingers.indexExtended && fingers.middleExtended && !fingers.ringExtended) {
@@ -78,4 +91,10 @@ export function getIndexFingerTip(
   const tip = landmarks[8]
   if (!tip) return undefined
   return { x: tip.x, y: tip.y }
+}
+
+export function getPinchDistanceFromLandmarks(
+  landmarks: NormalizedLandmark[],
+): number {
+  return getPinchDistance(landmarks)
 }

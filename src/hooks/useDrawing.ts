@@ -25,9 +25,9 @@ export function useDrawing() {
   }, [])
 
   const startStroke = useCallback(
-    (point: Point) => {
-      const size = tool === 'eraser' ? DEFAULT_ERASER_SIZE : brushSize
-      const stroke = createStroke(color, size, tool)
+    (point: Point, strokeTool: DrawingTool = tool) => {
+      const size = strokeTool === 'eraser' ? DEFAULT_ERASER_SIZE : brushSize
+      const stroke = createStroke(color, size, strokeTool)
       stroke.points.push(point)
       setActiveStroke(stroke)
     },
