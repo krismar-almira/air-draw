@@ -7,6 +7,7 @@ import { BrushSize } from '@/components/UI/BrushSize'
 import { ColorPicker } from '@/components/UI/ColorPicker'
 import { DocumentationModal } from '@/components/UI/DocumentationModal'
 import { GestureGuide } from '@/components/UI/GestureGuide'
+import { LoadingOverlay } from '@/components/UI/LoadingOverlay'
 import { Toolbar } from '@/components/UI/Toolbar'
 import { useCamera } from '@/hooks/useCamera'
 import { useDrawing } from '@/hooks/useDrawing'
@@ -178,7 +179,6 @@ export function DrawingBoard() {
         gesture={gesture.type}
         pendingGesture={pendingGesture}
         fps={fps}
-        isLoading={isLoading}
         showLandmarks={showLandmarks}
         onToggleLandmarks={() => setShowLandmarks((v) => !v)}
         onOpenDocs={() => setDocsOpen(true)}
@@ -194,11 +194,10 @@ export function DrawingBoard() {
 
       <div className="flex flex-1 overflow-hidden">
         <main ref={containerRef} className="relative flex-1">
-          <Camera
-            videoRef={videoRef}
-            error={error}
-            isActive={isActive}
-            onStart={start}
+          <Camera videoRef={videoRef} error={error} onStart={start} />
+          <LoadingOverlay
+            isLoadingHandTracking={isLoading}
+            isStartingCamera={!isActive && !error}
           />
           <DrawingCanvas
             strokes={strokes}

@@ -46,12 +46,7 @@ export function HandTrackingDemo() {
       )}
 
       <main ref={containerRef} className="relative flex-1">
-        <Camera
-          videoRef={videoRef}
-          error={error}
-          isActive={isActive}
-          onStart={start}
-        />
+        <Camera videoRef={videoRef} error={error} onStart={start} />
         {!isLoading && (
           <LandmarkRenderer landmarks={landmarks} layout={layout} />
         )}

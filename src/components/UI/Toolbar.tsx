@@ -4,7 +4,6 @@ interface ToolbarProps {
   gesture: GestureType
   pendingGesture?: GestureType | null
   fps?: number
-  isLoading?: boolean
   showLandmarks?: boolean
   onToggleLandmarks?: () => void
   onOpenDocs?: () => void
@@ -24,7 +23,6 @@ export function Toolbar({
   gesture,
   pendingGesture,
   fps,
-  isLoading,
   showLandmarks,
   onToggleLandmarks,
   onOpenDocs,
@@ -33,11 +31,6 @@ export function Toolbar({
     <header className="flex items-center justify-between gap-4 border-b border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-3">
       <div className="flex items-center gap-3">
         <h1 className="text-lg font-semibold tracking-tight">Air Draw</h1>
-        {isLoading && (
-          <span className="text-xs text-[var(--color-muted)]">
-            Loading hand tracking…
-          </span>
-        )}
       </div>
 
       <div className="flex items-center gap-4 text-sm">

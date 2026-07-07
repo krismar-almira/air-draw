@@ -4,11 +4,10 @@ import './Camera.css'
 interface CameraProps {
   videoRef: React.RefObject<HTMLVideoElement | null>
   error: string | null
-  isActive: boolean
   onStart: () => void
 }
 
-export function Camera({ videoRef, error, isActive, onStart }: CameraProps) {
+export function Camera({ videoRef, error, onStart }: CameraProps) {
   const hasRequested = useRef(false)
 
   useEffect(() => {
@@ -39,12 +38,6 @@ export function Camera({ videoRef, error, isActive, onStart }: CameraProps) {
         muted
         autoPlay
       />
-      {!isActive && (
-        <div className="camera__loading">
-          <div className="camera__spinner" />
-          <span>Starting camera…</span>
-        </div>
-      )}
     </div>
   )
 }
